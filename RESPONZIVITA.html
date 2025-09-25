@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prezentace – Responzivní design</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Roboto:wght@300;500&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            font-family: 'Roboto', sans-serif;
+            background: #F0F2F2;
+            overflow: hidden;
+        }
+
+        li {
+            text-align: left;
+        }
+
+        h3 {
+            text-align: left;
+        }
+
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 10px;
+            background-color: #5088B5;
+            width: 0%;
+            transition: width 0.3s ease;
+            z-index: 1001;
+        }
+
+        .slide-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.5s ease-in-out;
+            padding: 1rem;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+            z-index: 1;
+        }
+
+        .slide h1 {
+            font-family: 'Roboto Slab', serif;
+            font-size: clamp(1.75rem, 4vw, 3rem);
+            color: #5088B5;
+            margin-bottom: 1rem;
+        }
+
+        .slide p {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            color: #5088B5;
+        }
+
+        .slide img {
+            width: 80%;
+            max-width: 800px;
+            height: auto;
+            margin-top: 1.5rem;
+            border: 5px solid #5088B5;
+            border-radius: 1rem;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            max-width: 960px;
+            margin-top: 2rem;
+        }
+
+        th,
+        td {
+            border: 2px solid #5088B5;
+            padding: 1rem;
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            color: #3C3C3B;
+        }
+
+        th {
+            background-color: #AAD4F3;
+        }
+
+        .slide-number {
+            margin-bottom: 40px;
+            transform: translateX(-50%);
+            font-size: clamp(1.25rem, 2.5vw, 2rem);
+            color: #5088B5;
+            font-weight: bold;
+            font-family: 'Roboto Slab', serif;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 1rem;
+            width: 100%;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        .controls button {
+            background-color: #5088B5;
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            margin: 0 0.5rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            z-index: 1001;
+        }
+
+        .controls button:disabled {
+            background-color: #b0cce3;
+            cursor: not-allowed;
+        }
+
+        .controls button:hover:not(:disabled) {
+            background-color: #3E6182;
+        }
+
+        pre code {
+            display: block;
+            background-color: #F0F2F2;
+            color: #3C3C3B;
+            border: 2px solid #5088B5;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-width: 90%;
+            margin: 1rem auto;
+            text-align: left;
+        }
+
+        .zoom-wrapper {
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: zoom-in;
+        }
+
+        .zoom-wrapper.zoomed {
+            transform: scale(2);
+            z-index: 1002;
+            cursor: zoom-out;
+        }
+
+        .highlight-css code {
+            display: block;
+            background-color: #F0F2F2;
+            color: #3C3C3B;
+            border: 2px solid #5088B5;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-width: 90%;
+            margin: 1rem auto;
+            text-align: left;
+        }
+
+        .highlight-css code span.selector {
+            color: #0074D9;
+            font-weight: bold;
+        }
+
+        .highlight-css code span.property {
+            color: #2E8B57;
+        }
+
+        .highlight-css code span.value {
+            color: #B22222;
+        }
+
+        @media (max-width: 768px) {
+            .slide img {
+                width: 95%;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            .slide p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="progress" id="progressBar"></div>
+
+    <div class="slide-container">
+        <div class="slide  active">
+            <div class="slide-number">00</div>
+            <h1 style="font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 1rem;">📱 Responzivní design</h1>
+            <p style="font-size: clamp(1.25rem, 2.5vw, 2rem); color: #3C3C3B;">vytvořil <strong>Jiří Boucník</strong> –
+                třída <strong>L2</strong></p>
+            <img src="./assets/img/00.jpg" alt="Responzivní design"
+                style="margin-top: 2rem; border-radius: 1rem; border: 4px solid #5088B5; max-width: 50%; height: auto;">
+        </div>
+        <div class="slide">
+            <div class="slide-number">01</div>
+            <h1>Co je responzivní design?</h1>
+            <section>
+                <p>Design, který se přizpůsobuje různým zařízením – mobilům, tabletům, počítačům.</p>
+                <div class="zoom-wrapper" onclick="this.classList.toggle('zoomed')">
+                    <img src="./assets/img/01.0.webp" alt="Responzivní design">
+                </div>
+                <div class="zoom-wrapper" onclick="this.classList.toggle('zoomed')">
+                    <img src="./assets/img/01.1.jpg" alt="Responzivní design">
+                </div>
+            </section>
+        </div>
+        <div class="slide">
+            <div class="slide-number">02</div>
+            <h1>Proč je důležitý?</h1>
+            <p>Zajišťuje přístupnost, lepší uživatelský zážitek a vyšší návštěvnost.</p>
+            <div class="zoom-wrapper" onclick="this.classList.toggle('zoomed')">
+                <img src="./assets/img/02.jpg" alt="Mobilní vs PC">
+            </div>
+        </div>
+        <div class="slide">
+            <div class="slide-number">03</div>
+            <h1>Jak ho poznám?</h1>
+            <p>Stránka se správně zobrazuje na mobilu i počítači, prvky nejsou mimo obrazovku.</p>
+            <div class="zoom-wrapper" onclick="this.classList.toggle('zoomed')">
+                <img src="./assets/img/03.jpg"" alt=" Příklad rozvržení">
+            </div>
+        </div>
+        <div class="slide">
+            <div class="slide-number">04</div>
+            <h1>Responzivní vs. neresponzivní</h1>
+            <p>Jak rozeznat rozdíly v praxi? Zde je jednoduché porovnání:</p>
+            <table>
+                <tr>
+                    <th>Vlastnost</th>
+                    <th>Responzivní vzhled</th>
+                    <th>Neresponzivní vzhled</th>
+                </tr>
+                <tr>
+                    <td>Přizpůsobení obrazovce</td>
+                    <td>Ano – na všech zařízeních</td>
+                    <td>Ne – např. text mimo obrazovku</td>
+                </tr>
+                <tr>
+                    <td>Čitelnost</td>
+                    <td>Vždy čitelný text</td>
+                    <td>Malý nebo přerušený text</td>
+                </tr>
+                <tr>
+                    <td>Ovládací prvky</td>
+                    <td>Dostatečně velké, snadno klikatelné</td>
+                    <td>Příliš malé nebo moc blízko u sebe</td>
+                </tr>
+                <tr>
+                    <td>Navigace</td>
+                    <td>Přizpůsobená pro mobil i PC</td>
+                    <td>Často pouze pro PC verzi</td>
+                </tr>
+            </table>
+        </div>
+        <div class="slide">
+            <div class="slide-number">05.0</div>
+            <h1>Jak vytvořit responzivní design?</h1>
+            <p>
+            <ol>
+                <li>Meta tag pro zajištění správného měřítka</li>
+                <li>CSS – styly pro responzivitu</li>
+
+            </ol>
+            </p>
+            <div class="zoom-wrapper" onclick="this.classList.toggle('zoomed')">
+                <img src="./assets/img/05.jpg" alt=" Příklad rozvržení">
+            </div>
+        </div>
+        <div class="slide">
+            <div class="slide-number">05.1</div>
+            <h1>Jak vytvořit responzivní design - Meta tag</h1>
+            <pre><code>&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;</code></pre>
+            <ul>
+                <li><strong>width=device-width</strong> znamená, že šířka stránky se přizpůsobí šířce obrazovky.</li>
+                <li><strong>initial-scale=1.0</strong> nastavuje základní měřítko zobrazení (1:1).</li>
+            </ul>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; margin-top: 2rem;">
+                <div style="flex: 1; min-width: 400px; max-width: 480px;">
+                    <h3 style="margin-bottom: 5px;">🌐 S viewportem</h3>
+                    <iframe src="./assets/exemples/withviewport.html" width="100%" height="300"
+                        style="border: 2px solid #5088B5; border-radius: 0.5rem;"></iframe>
+                </div>
+                <div style="flex: 1; min-width: 400px; max-width: 480px;">
+                    <h3 style="margin-bottom: 5px;">❌ Bez viewportu</h3>
+                    <iframe src="./assets/exemples/withoutviewport.html" width="100%" height="300"
+                        style="border: 2px solid #5088B5; border-radius: 0.5rem;"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-number">05.2</div>
+            <h1>Jak vytvořit responzivní design - CSS</h1>
+            <section>
+                <h3>Flexbox a CSS Grid</h3>
+                <ul>
+                    <li><strong>Flexbox</strong> umožňuje snadno zarovnat prvky v řadě nebo sloupci (např. menu,
+                        galerie).</li>
+                    <li><strong>Grid</strong> je silnější pro rozvržení celé stránky do oblastí (hlavička, obsah,
+                        postranní panel, apod.).</li>
+                </ul>
+
+                <h3>Relativní jednotky</h3>
+                <ul>
+                    <li><code>vw</code>, <code>vh</code> – procenta šířky nebo výšky okna</li>
+                    <li><code>%</code> – procenta relativní vůči rodičovskému prvku</li>
+                    <li><code>em</code>, <code>rem</code> – relativní velikosti písma</li>
+                </ul>
+
+                <h3>Media Queries</h3>
+                <pre class="highlight-css"><code>/* If the screen size is 600px wide or less, hide the element */
+@media only screen and (max-width: 600px) {
+  div.example {
+    display: none;
+  }
+} 
+<div> /* If the screen size is 601px or more, set the font-size of to 80px */
+@media only screen and (min-width: 601px) {
+  div.example {
+    font-size: 80px;
+  }
+}
+
+<div>/* If the screen size is 600px or less, set the font-size of  to 30px */
+@media only screen and (max-width: 600px) {
+  div.example {
+    font-size: 30px;
+  }
+}</code></pre>
+                <h3 style="margin-bottom: 5px;">Na PC</h3>
+                <iframe src="./assets/exemples/grid.html" width="100%" height="300"
+                    style="border: 2px solid #5088B5; border-radius: 0.5rem;"></iframe>
+                <h3 style="margin-bottom: 5px;">Na mobilu</h3>
+                <iframe src="./assets/exemples/grid.html" width="50%" height="300"
+                    style="border: 2px solid #5088B5; border-radius: 0.5rem;"></iframe>
+
+            </section>
+
+            </p>
+        </div>
+        <div class="slide">
+            <div class="slide-number">06</div>
+            <h1 style="font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 1rem;">Zdroje</h1>
+            <ul style="font-size: clamp(1.25rem, 2.5vw, 1.75rem); color: #3C3C3B; text-align: left; max-width: 800px;">
+                <li><strong>ChatGPT</strong> – pomoc s vysvětlením a generováním obsahu</li>
+                <li><strong>W3Schools</strong> – referenční příklady a dokumentace</li>
+                <li><strong>Alba-rosa.cz</strong> – hlavní sponzor</li>
+                <li><strong>Moje hlava a know-how</strong> – praktické zkušenosti a vlastní poznatky</li>
+            </ul>
+            <img src="./assets/img/06.jpg" alt="Zdroje"
+                style="margin-top: 2rem; border-radius: 1rem; border: 4px solid #5088B5; max-width: 30%; height: auto;">
+        </div>
+
+        <div class="slide  ">
+            <div class="slide-number">07</div>
+            <h1 style="font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 1rem;">DĚKUJI ZA POZORNOST</h1>
+
+            <img src="./assets/img/07.jpg" alt="Responzivní design"
+                style="margin-top: 2rem; border-radius: 1rem; border: 4px solid #5088B5; max-width: 50%; height: auto;">
+        </div>
+    </div>
+    </div>
+
+    <div class="controls">
+        <button id="prevBtn" onclick="changeSlide(-1)">Zpět</button>
+        <button id="nextBtn" onclick="changeSlide(1)">Další</button>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let current = 0;
+
+        function updateButtons() {
+            prevBtn.disabled = current === 0;
+            nextBtn.disabled = current === slides.length - 1;
+        }
+
+        function updateProgressBar() {
+            const progress = ((current + 1) / slides.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function changeSlide(direction) {
+            if ((direction === -1 && current === 0) || (direction === 1 && current === slides.length - 1)) {
+                return;
+            }
+            slides[current].classList.remove('active');
+            current = current + direction;
+            slides[current].classList.add('active');
+            updateButtons();
+            updateProgressBar();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        // Touch swipe navigation
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                changeSlide(1);
+            }
+            if (touchEndX > touchStartX + 50) {
+                changeSlide(-1);
+            }
+        }
+
+        updateButtons();
+        updateProgressBar();
+    </script>
+</body>
+
+</html>
