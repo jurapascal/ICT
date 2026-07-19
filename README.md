@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:8e2de2,100:4a00e0&height=170&section=header&text=ICT&fontSize=46&fontAlignY=38&fontColor=ffffff&desc=Alba-rosa.cz&descAlignY=58&descSize=16" alt="ICT" width="100%"/>
+</p>
+
 # Alba-rosa.cz · ICT
 
 > Prohlížeč souborů a složek s výukovými ICT materiály.
